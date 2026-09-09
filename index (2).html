@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Hub — Learn Something New</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#14213D;
+    --navy-soft:#1F2E54;
+    --amber:#FCA311;
+    --amber-dark:#E08E00;
+    --bg:#FFFFFF;
+    --bg-alt:#F6F7FA;
+    --text:#182033;
+    --text-muted:#5B6478;
+    --border:#E6E8EF;
+    --shadow: 0 8px 24px rgba(20,33,61,0.08);
+    --shadow-hover: 0 16px 40px rgba(20,33,61,0.14);
+    --radius: 14px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.logo{
+    font-family:'Space Grotesk',sans-serif;
+  }
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+
+  /* ---------- Header ---------- */
+  .site-header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:saturate(180%) blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{
+    font-size:1.3rem;
+    font-weight:700;
+    color:var(--navy);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    letter-spacing:-0.01em;
+  }
+  .logo-mark{
+    width:30px;
+    height:30px;
+    border-radius:8px;
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .logo-mark svg{width:14px;height:14px;fill:var(--amber);}
+
+  .main-nav ul{
+    list-style:none;
+    display:flex;
+    gap:36px;
+    margin:0;
+    padding:0;
+  }
+  .main-nav a{
+    font-weight:500;
+    font-size:0.96rem;
+    color:var(--text);
+    position:relative;
+    padding:6px 2px;
+    transition:color .2s ease;
+  }
+  .main-nav a::after{
+    content:"";
+    position:absolute;
+    left:0;bottom:0;
+    width:0;
+    height:2px;
+    background:var(--amber);
+    transition:width .25s ease;
+  }
+  .main-nav a:hover{color:var(--navy);}
+  .main-nav a:hover::after{width:100%;}
+
+  .nav-toggle{
+    display:none;
+    background:none;
+    border:none;
+    width:40px;
+    height:40px;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+  }
+  .nav-toggle:hover{background:var(--bg-alt);}
+  .nav-toggle span{
+    display:block;
+    width:20px;
+    height:2px;
+    background:var(--navy);
+    position:relative;
+    transition:background .2s ease;
+  }
+  .nav-toggle span::before,
+  .nav-toggle span::after{
+    content:"";
+    position:absolute;
+    left:0;
+    width:20px;
+    height:2px;
+    background:var(--navy);
+    transition:transform .25s ease, top .25s ease;
+  }
+  .nav-toggle span::before{top:-6px;}
+  .nav-toggle span::after{top:6px;}
+  .nav-toggle.open span{background:transparent;}
+  .nav-toggle.open span::before{top:0;transform:rotate(45deg);}
+  .nav-toggle.open span::after{top:0;transform:rotate(-45deg);}
+
+  /* ---------- Hero / Main heading ---------- */
+  .hero{
+    max-width:720px;
+    margin:0 auto;
+    padding:72px 24px 40px;
+    text-align:center;
+  }
+  .hero h1{
+    font-size:clamp(2rem, 4.5vw, 2.75rem);
+    font-weight:700;
+    color:var(--navy);
+    margin:0 0 14px;
+    letter-spacing:-0.02em;
+    line-height:1.15;
+  }
+  .hero p{
+    font-size:1.08rem;
+    color:var(--text-muted);
+    margin:0;
+    line-height:1.6;
+  }
+
+  /* ---------- Video grid ---------- */
+  .video-section{
+    max-width:1180px;
+    margin:0 auto;
+    padding:20px 24px 96px;
+  }
+  .video-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:28px;
+  }
+
+  .video-card{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:transform .3s ease, box-shadow .3s ease;
+    display:flex;
+    flex-direction:column;
+  }
+  .video-card:hover{
+    transform:translateY(-6px);
+    box-shadow:var(--shadow-hover);
+  }
+
+  .thumb{
+    position:relative;
+    aspect-ratio:16/9;
+    width:100%;
+    background:linear-gradient(135deg, var(--tc1,#14213D), var(--tc2,#1F2E54));
+    overflow:hidden;
+  }
+  .thumb video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    background:#0d1730;
+  }
+  .thumb .badge{
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    background:rgba(0,0,0,0.65);
+    color:#fff;
+    font-size:0.72rem;
+    padding:3px 7px;
+    border-radius:5px;
+    font-weight:600;
+    letter-spacing:0.02em;
+  }
+  .play-btn{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(20,33,61,0.18);
+    transition:background .25s ease;
+    border:none;
+    width:100%;
+    padding:0;
+  }
+  .play-btn:hover{background:rgba(20,33,61,0.32);}
+  .play-circle{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.25);
+    transition:transform .25s ease;
+  }
+  .play-btn:hover .play-circle{transform:scale(1.08);}
+  .play-circle svg{width:18px;height:18px;fill:var(--navy);margin-left:3px;}
+
+  .card-body{
+    padding:20px 22px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    flex:1;
+  }
+  .card-body .tag{
+    font-size:0.74rem;
+    font-weight:600;
+    color:var(--amber-dark);
+  }
+  .card-body h3{
+    font-size:1.08rem;
+    font-weight:600;
+    color:var(--navy);
+    margin:0;
+    line-height:1.35;
+  }
+  .card-body p{
+    font-size:0.9rem;
+    color:var(--text-muted);
+    margin:0 0 10px;
+    line-height:1.55;
+    flex:1;
+  }
+
+  .watch-btn{
+    align-self:flex-start;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:0.88rem;
+    font-weight:600;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .watch-btn:hover{background:var(--amber);color:var(--navy);transform:translateY(-1px);}
+  .watch-btn svg{width:12px;height:12px;fill:currentColor;}
+
+  /* ---------- Footer ---------- */
+  .site-footer{
+    border-top:1px solid var(--border);
+    background:var(--bg-alt);
+    padding:28px 24px;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:0.85rem;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:900px){
+    .video-grid{grid-template-columns:repeat(2, 1fr);}
+  }
+
+  @media (max-width:680px){
+    .main-nav{
+      position:absolute;
+      top:100%;
+      left:0;
+      right:0;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      box-shadow:0 12px 24px rgba(20,33,61,0.08);
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .3s ease;
+    }
+    .main-nav.open{max-height:280px;}
+    .main-nav ul{
+      flex-direction:column;
+      gap:0;
+      padding:8px 24px 16px;
+    }
+    .main-nav li{border-bottom:1px solid var(--border);}
+    .main-nav li:last-child{border-bottom:none;}
+    .main-nav a{display:block;padding:14px 4px;}
+    .main-nav a::after{display:none;}
+    .nav-toggle{display:flex;}
+    .site-header{position:sticky;}
+    .header-inner{position:relative;}
+
+    .video-grid{grid-template-columns:1fr;}
+    .hero{padding:52px 20px 32px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+      Video Hub
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#videos">Videos</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="videos">
+    <h1>Featured Videos</h1>
+    <p>Explore our collection of featured videos.</p>
+  </section>
+
+  <section class="video-section">
+    <div class="video-grid" id="videoGrid"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  &copy; 2026 Video Hub. All rights reserved.
+</footer>
+
+<script>
+  // ----- Mobile nav toggle -----
+  const navToggle = document.getElementById('navToggle');
+  const mainNav = document.getElementById('mainNav');
+
+  navToggle.addEventListener('click', () => {
+    const isOpen = mainNav.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+
+  // Close menu after tapping a link (mobile)
+  mainNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mainNav.classList.remove('open');
+      navToggle.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // ----- Video data -----
+  const videos = [
+    {
+      title: "Introduction to Technology",
+      tag: "Beginner",
+      description: "A friendly starting point covering the core ideas that shape modern technology.",
+      duration: "8:12",
+      colors: ["#14213D", "#1F2E54"],
+      src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+    },
+    {
+      title: "Artificial Intelligence",
+      tag: "Trending",
+      description: "How machine learning models learn from data and power today's AI tools.",
+      duration: "12:45",
+      colors: ["#1F2E54", "#2F3E70"],
+      src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4"
+    },
+    {
+      title: "Web Development",
+      tag: "Popular",
+      description: "Build your first responsive site using HTML, CSS, and JavaScript fundamentals.",
+      duration: "15:30",
+      colors: ["#0D1B33", "#14213D"],
+      src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm"
+    },
+    {
+      title: "Data Science",
+      tag: "Intermediate",
+      description: "Turn raw numbers into real insight with practical data analysis techniques.",
+      duration: "10:05",
+      colors: ["#182848", "#223667"],
+      src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4"
+    },
+    {
+      title: "Cyber Security",
+      tag: "Essential",
+      description: "Understand the everyday threats online and the habits that keep you safe.",
+      duration: "9:50",
+      colors: ["#101E3A", "#1A2C52"],
+      src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+    },
+    {
+      title: "Future Technology",
+      tag: "New",
+      description: "A look at emerging innovations set to shape the next decade of computing.",
+      duration: "11:20",
+      colors: ["#122043", "#203457"],
+      src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4"
+    }
+  ];
+
+  const grid = document.getElementById('videoGrid');
+
+  videos.forEach((v, i) => {
+    const card = document.createElement('article');
+    card.className = 'video-card';
+
+    card.innerHTML = `
+      <div class="thumb" style="--tc1:${v.colors[0]};--tc2:${v.colors[1]}">
+        <video preload="none" muted playsinline poster="" data-src="${v.src}"></video>
+        <button class="play-btn" aria-label="Play ${v.title}" data-index="${i}">
+          <span class="play-circle">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </button>
+        <span class="badge">${v.duration}</span>
+      </div>
+      <div class="card-body">
+        <span class="tag">${v.tag}</span>
+        <h3>${v.title}</h3>
+        <p>${v.description}</p>
+        <button class="watch-btn" data-index="${i}">
+          Watch Now
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  // ----- Playback handling (graceful if the sample video can't load) -----
+  function playCard(index){
+    const card = grid.children[index];
+    const thumb = card.querySelector('.thumb');
+    const videoEl = thumb.querySelector('video');
+    const playBtn = thumb.querySelector('.play-btn');
+    const badge = thumb.querySelector('.badge');
+
+    if (!videoEl.src) {
+      videoEl.src = videoEl.dataset.src;
+    }
+
+    videoEl.controls = true;
+    playBtn.style.display = 'none';
+    if (badge) badge.style.display = 'none';
+
+    videoEl.play().catch(() => {
+      // Video unavailable — show a friendly fallback instead of a broken player
+      thumb.innerHTML = `
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;
+             align-items:center;justify-content:center;color:#fff;text-align:center;
+             padding:16px;gap:6px;font-family:Inter,sans-serif;">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="#FCA311"><path d="M8 5v14l11-7z"/></svg>
+          <span style="font-size:0.85rem;opacity:0.85;">Preview unavailable right now</span>
+        </div>`;
+    });
+  }
+
+  grid.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.play-btn, .watch-btn');
+    if (!trigger) return;
+    const index = Number(trigger.dataset.index);
+    playCard(index);
+  });
+</script>
+
+</body>
+</html>
